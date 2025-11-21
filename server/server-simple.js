@@ -1478,7 +1478,7 @@ app.get('/api/reports', requireAuth, async (req, res) => {
 });
 
 // SERVE STATIC FILES
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, '..', 'public')));
 
 // ================================================
 // POS (POINT OF SALE) ENDPOINTS
@@ -1780,7 +1780,7 @@ app.get('/api/tours/stats', requireAuth, async (req, res) => {
 });
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
 });
 
 // ERROR HANDLER
