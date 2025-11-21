@@ -556,6 +556,8 @@ const requireAuth = (req, res, next) => {
 // ============================================
 
 const reservationsModule = require('./modules/reservations');
+const icalSyncModule = require('./modules/ical-sync');
+const ICalSyncCron = require('./cron/sync-ical');
 
 // ============================================
 // MIDDLEWARES
@@ -599,6 +601,25 @@ app.use('/api/reservations', requireAuth, (req, res, next) => {
   req.session = req.user;
   next();
 }, reservationsModule);
+
+// iCal Sync module (OTA integration)
+// Export endpoints are public (OTAs need to access them)
+// Management endpoints require auth
+app.use('/api/ical', (req, res, next) => {
+  // Public endpoints (iCal export)
+  if (req.path.match(/\.(ics)$/)) {
+    // Allow public access to .ics files
+    req.app.locals.db = dbAdapter;
+    return next();
+  }
+
+  // All other endpoints require auth
+  requireAuth(req, res, () => {
+    req.sessionInfo = req.user;
+    req.app.locals.db = dbAdapter;
+    next();
+  });
+}, icalSyncModule);
 
 // ============================================
 // API ROUTES
@@ -1826,12 +1847,17 @@ async function startServer() {
     // Initialize database with tables and demo data
     await initializeDatabase();
 
+    // Start iCal sync cron job (OTA synchronization every 2 hours)
+    const icalCron = new ICalSyncCron();
+    icalCron.startCronJob();
+
     const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => {
       console.log(`🚀 Almanik PMS Simple running on port ${PORT}`);
       console.log(`🌐 Dashboard: http://localhost:${PORT}`);
       console.log(`🔧 API: http://localhost:${PORT}/api`);
       console.log(`🔑 Login: admin / admin123`);
+      console.log('📅 iCal Sync: Running every 2 hours');
       console.log('');
     });
   } catch (error) {
