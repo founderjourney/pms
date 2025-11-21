@@ -1,2 +1,6 @@
 .vercel
 .env*.local
+
+# Local development files
+server.log
+server/almanik.db

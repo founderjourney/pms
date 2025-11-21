@@ -30,21 +30,33 @@ Planificación del proyecto y hojas de ruta:
 Guías de despliegue y configuración en producción:
 
 - **DEPLOYMENT-GUIDE.md** - Guía general de despliegue
+- **NEON-MIGRATION-PLAN.md** - Plan de migración a Neon PostgreSQL
+- **MIGRATION-COMPLETE.md** - Reporte de migración completada (Day 1)
 - **PRODUCTION-DEPLOY-COMPLETE.md** - Despliegue en producción completo
 - **DEPLOY-SUCCESS.md** - Reporte de despliegue exitoso
-- **MIGRATION-COMPLETE.md** - Migración a Supabase completada
-- **SUPABASE-SETUP.md** - Configuración de Supabase
+- **SUPABASE-SETUP.md** - Configuración de Supabase (legacy)
 
-### 04. Reportes de Estado
-**Ubicación:** `docs/04-reports/`
+### 04. Planes Diarios y Reportes
+**Ubicación:** `docs/04-daily-plans/` y `docs/04-reports/`
 
-Reportes periódicos del estado del proyecto:
+#### Planes Diarios (NEW - 2025-11-20):
+- **DIA-2-PLAN.md** - 🆕 Plan detallado Día 2 con estrategia de delegación
+- **DIA-2-RESUMEN.md** - 🆕 Resumen completo Día 2 (100% completado)
 
-- **STATUS-REPORT-CURRENT.md** - 🔴 Reporte más reciente (consultar primero)
+#### Reportes de Estado:
+- **STATUS-REPORT-CURRENT.md** - Reporte histórico (Oct 2025)
 - **STATUS-REPORT.md** - Reporte histórico anterior
 - **TECHNICAL-AUDIT-REPORT.md** - Auditoría técnica del sistema
+- **SENIOR-ARCHITECT-AUDIT-2025-11-19.md** - Auditoría arquitectónica
 
-### 05. Notas de Desarrollo
+### 05. Documentación API
+**Ubicación:** `docs/05-api/`
+
+Documentación detallada de APIs y endpoints:
+
+- **RESERVATIONS-API.md** - 🆕 API completa de Reservas (7 endpoints) con ejemplos
+
+### 06. Notas de Desarrollo
 **Ubicación:** `docs/05-development/`
 
 Contexto y notas para el equipo de desarrollo:
@@ -63,18 +75,29 @@ Documentación antigua que ya no es relevante pero se mantiene para referencia h
 ## 🚀 INICIO RÁPIDO
 
 ### Para nuevos desarrolladores:
-1. Lee primero: `docs/05-development/context.md`
-2. Revisa el estado actual: `docs/04-reports/STATUS-REPORT-CURRENT.md`
-3. Consulta el PRD: `docs/01-product/PRD-v3-SIMPLIFICADO.md`
+1. 🔥 **START HERE:** `docs/START-HERE.md`
+2. 📊 **Progreso actual:** `docs/PROJECT-TRACKING.md` (🆕 ACTUALIZADO)
+3. 📖 Contexto completo: `docs/05-development/context.md`
+4. 📋 PRD del sistema: `docs/01-product/PRD-v3-SIMPLIFICADO.md`
+
+### Para seguir el progreso diario:
+1. 🎯 **Tracking general:** `docs/PROJECT-TRACKING.md` (70% completado)
+2. 📅 **Día 2 (último):** `docs/04-daily-plans/DIA-2-RESUMEN.md` (✅ Completado)
+3. 🗓️ **Plan Día 2:** `docs/04-daily-plans/DIA-2-PLAN.md`
+
+### Para usar las APIs:
+1. 🔌 **API Reservations:** `docs/05-api/RESERVATIONS-API.md` (7 endpoints)
+2. 🧪 **Testing manual:** `GUIA-TESTING-MANUAL.md` (raíz del proyecto)
+3. 🤖 **Testing automático:** `test-reservations.sh` (raíz del proyecto)
 
 ### Para deployment:
 1. Guía principal: `docs/03-deployment/DEPLOYMENT-GUIDE.md`
-2. Setup de BD: `docs/03-deployment/SUPABASE-SETUP.md`
-3. Verificar producción: `docs/03-deployment/PRODUCTION-DEPLOY-COMPLETE.md`
+2. Migración Neon: `docs/03-deployment/NEON-MIGRATION-PLAN.md`
+3. Reporte migración: `docs/03-deployment/MIGRATION-COMPLETE.md`
 
 ### Para stakeholders:
-1. Resumen ejecutivo: `docs/01-product/RESUMEN-EJECUTIVO-SISTEMA.md`
-2. Estado actual: `docs/04-reports/STATUS-REPORT-CURRENT.md`
+1. 📊 Progreso actual: `docs/PROJECT-TRACKING.md`
+2. Resumen ejecutivo: `docs/01-product/RESUMEN-EJECUTIVO-SISTEMA.md`
 3. Roadmap: `docs/02-planning/ROADMAP-SENIOR.md`
 
 ---
@@ -121,5 +144,5 @@ Prototipos HTML antiguos para referencia histórica.
 
 ---
 
-**Última actualización:** 2025-11-19
+**Última actualización:** 2025-11-20 (Day 2 - Reservations Backend Complete)
 **Mantenido por:** Equipo Almanik PMS

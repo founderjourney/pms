@@ -1,290 +1,547 @@
 # 🏨 ALMANIK PMS - Sistema de Gestión Hotelera
-## ✅ SISTEMA COMPLETO EN PRODUCCIÓN - 100% OPERATIVO
 
-### **🌐 URL DE PRODUCCIÓN ACTIVA:**
-**https://hostal-pms.vercel.app**
+## ✅ SISTEMA EN PRODUCCIÓN - FASE 1 EN DESARROLLO
 
----
-
-## 🎯 **ESTADO ACTUAL: PRODUCCIÓN COMPLETA**
-
-### **Sistema Totalmente Funcional con:**
-✅ **Autenticación Segura** - Sistema de usuarios con roles y permisos (bcrypt + PostgreSQL)
-✅ **3 Niveles de Usuario** - Administrador, Recepcionista, Voluntario
-✅ **Gestión de Usuarios** - CRUD completo de usuarios con asignación de roles
-✅ **Gestión de Camas** - Control completo de 27 camas en 6 habitaciones
-✅ **Gestión de Huéspedes** - CRUD completo con búsqueda avanzada
-✅ **Sistema POS** - Ventas, inventario y control de stock
-✅ **Gestión de Personal** - Administración de empleados
-✅ **Sistema de Tours** - Con tracking de comisiones y clicks
-✅ **Analytics & Reports** - Dashboard completo con KPIs y exportación
-✅ **Control de Caja** - Ingresos, egresos y balances diarios
-✅ **Base de Datos PostgreSQL** - Escalable y en la nube (Supabase)
-✅ **Tema Moderno** - Interfaz clara y profesional
-✅ **Contraste Optimizado** - Legibilidad perfecta
-✅ **Completamente Responsive** - Diseño adaptado para móviles y tablets
-✅ **Menú Hamburguesa** - Navegación móvil profesional
-
----
-
-## 🚀 **Tecnologías Implementadas**
-
-### **Stack Actual:**
-- **Backend:** Node.js + Express.js
-- **Base de Datos:** PostgreSQL (Supabase) + SQLite (desarrollo)
-- **Autenticación:** bcrypt + sesiones seguras
-- **Frontend:** Vanilla JavaScript (ES6+)
-- **UI:** CSS3 con diseño moderno y completamente responsive
-- **Mobile:** Menú hamburguesa y diseño adaptativo
-- **Despliegue:** Vercel + Supabase (Production Ready)
-- **SSL:** Automático incluido
-
-### **Base de Datos Implementada:**
-```
-10 TABLAS COMPLETAS:
-✅ users (sistema de autenticación)
-✅ guests (huéspedes completo)
-✅ beds (27 camas reales)
-✅ bookings (reservas y check-in/out)
-✅ transactions (pagos y cargos)
-✅ products (inventario POS)
-✅ staff (gestión de personal)
-✅ tours (sistema de tours con comisiones)
-✅ tour_clicks (tracking de clicks)
-✅ tour_commissions (sistema de comisiones)
-✅ activity_log (tracking completo)
-```
-
----
-
-## 📱 **Funcionalidades Implementadas**
-
-### 🔐 **Sistema de Autenticación y Usuarios**
-- **Login seguro** con bcrypt y PostgreSQL
-- **3 Roles de usuario:** Administrador, Recepcionista, Voluntario
-- **Gestión de usuarios:** CRUD completo con asignación de roles
-- **Control de permisos:** Acceso granular por módulo y función
-- **Sesiones seguras:** Middleware de autenticación automático
-- **Auditoria:** Registro de actividad y último login
-
-### 🛏️ **Gestión de Camas**
-- Control de disponibilidad en tiempo real
-- Estados: Disponible, Ocupada, Por Limpiar
-- 27 camas distribuidas en 6 habitaciones
-- Check-in y Check-out automático
-
-### 👥 **Gestión de Huéspedes**
-- CRUD completo con validación
-- Búsqueda avanzada (nombre, documento, email)
-- Historial de estadías
-- Estadísticas de huéspedes
-
-### 🛒 **Sistema POS**
-- Gestión completa de productos
-- Control de inventario con alertas
-- Carrito de compras funcional
-- Múltiples métodos de pago
-- Indicadores visuales de stock
-
-### 👨‍💼 **Gestión de Personal**
-- Administración de empleados
-- Registro de contacto y salarios
-- Organización por posiciones
-- Estados activo/inactivo
-
-### 💰 **Control de Caja**
-- Ingresos y egresos detallados
-- Balances diarios automáticos
-- Transacciones por método de pago
-- Conciliación contable
-
-### 🚶 **Sistema de Tours**
-- Catálogo completo con descripciones
-- Tracking de clicks y comisiones
-- Redirección a proveedores externos
-- Estadísticas de conversión
-- 5 tours demo para Medellín
-
-### 📊 **Analytics & Reports**
-- Dashboard con KPIs principales
-- Reportes financieros detallados
-- Análisis de ocupación
-- Gráficos interactivos
-- Top performers
-- Exportación de datos JSON
-- Filtros por fecha y tipo
-
----
-
-## 🔐 **Acceso al Sistema**
+**Versión:** 1.2.0
+**Estado:** Production Ready + Active Development
+**Última actualización:** 2025-11-20
 
 ### **🌐 URL DE PRODUCCIÓN:**
 **https://hostal-pms.vercel.app**
 
-### **👑 Administrador (Acceso Completo):**
+---
+
+## 🎯 ESTADO ACTUAL DEL PROYECTO
+
+### **Día 2 Completado - Sistema de Reservas Backend** ✅
+
+| Módulo | Estado | Progreso | Prioridad |
+|--------|--------|----------|-----------|
+| **🔐 Autenticación** | ✅ Completado | 100% | CRÍTICA |
+| **🗄️ Database Neon** | ✅ Migrado | 100% | CRÍTICA |
+| **📋 Reservas (Backend)** | ✅ **NUEVO** | 100% | CRÍTICA |
+| **🛏️ Gestión de Camas** | ✅ Funcionando | 85% | ALTA |
+| **👥 Gestión de Huéspedes** | ✅ Funcionando | 80% | ALTA |
+| **🛒 Sistema POS** | ⚠️ Básico | 70% | MEDIA |
+| **👨‍💼 Gestión de Personal** | ⚠️ Básico | 60% | MEDIA |
+| **💰 Sistema de Caja** | 🔄 En desarrollo | 10% | CRÍTICA |
+| **🚶 Tours** | ⚠️ Básico | 65% | MEDIA |
+| **📊 Reportes** | ⚠️ Básico | 75% | MEDIA |
+
+**Progreso General:** ~70% del sistema completo
+
+---
+
+## 🆕 NOVEDADES - DÍA 2 (2025-11-20)
+
+### ✨ Sistema de Reservas Completo (Backend)
+
+**7 Endpoints Nuevos Implementados:**
+
+1. **POST** `/api/reservations` - Crear nueva reserva
+2. **GET** `/api/reservations` - Listar reservas (con filtros)
+3. **GET** `/api/reservations/:id` - Ver detalles de reserva
+4. **PUT** `/api/reservations/:id` - Actualizar reserva
+5. **DELETE** `/api/reservations/:id` - Cancelar reserva
+6. **POST** `/api/reservations/:id/confirm` - Confirmar reserva
+7. **GET** `/api/reservations/availability/check` - Verificar disponibilidad
+
+**Características Implementadas:**
+- ✅ Generación automática de códigos de confirmación (ALM-YYYYMMDD-HHMMSS)
+- ✅ Validación de disponibilidad con detección de conflictos
+- ✅ Cálculo automático de precio basado en noches
+- ✅ Gestión de estados (pending, confirmed, checked_in, checked_out, cancelled, no_show)
+- ✅ Creación automática de transacciones al confirmar
+- ✅ Logging completo de actividades
+- ✅ Soporte para múltiples orígenes (walkin, phone, email, booking.com, etc.)
+
+**Documentación:**
+- 📖 API completa: `docs/05-api/RESERVATIONS-API.md`
+- 🧪 Guía de testing: `GUIA-TESTING-MANUAL.md`
+- 🤖 Script de testing: `test-reservations.sh`
+
+---
+
+## 🚀 TECNOLOGÍAS
+
+### **Stack Actual:**
+- **Backend:** Node.js 18+ + Express.js
+- **Base de Datos:**
+  - **Producción:** PostgreSQL 16 (Neon Serverless)
+  - **Desarrollo:** SQLite 3
+- **Autenticación:** bcrypt + sesiones con roles y permisos
+- **Frontend:** Vanilla JavaScript (ES6+) + CSS3
+- **Deploy:** Vercel Serverless
+- **SSL:** Automático
+
+### **Database Schema (20 Tablas):**
+
+**Tablas Core:**
 ```
-Usuario: admin
-Contraseña: admin123
-Permisos: Gestión completa + usuarios
+✅ users           - Sistema de autenticación y roles
+✅ guests          - Huéspedes (con campos legales)
+✅ beds            - 27 camas en 6 habitaciones
+✅ bookings        - Reservas completas ⭐ NUEVO
+✅ transactions    - Transacciones financieras
 ```
 
-### **🏨 Recepcionista (Operaciones):**
+**Módulos Adicionales:**
 ```
-Usuario: recepcion
-Contraseña: recepcion123
-Permisos: Huéspedes, camas, POS, reportes básicos
-```
-
-### **🙋 Voluntario (Solo Lectura):**
-```
-Usuario: voluntario
-Contraseña: voluntario123
-Permisos: Consultas básicas + POS limitado
+✅ products          - Inventario POS
+✅ sale_items        - Items de ventas
+✅ staff             - Personal del hostal
+✅ attendance        - Asistencia de staff
+✅ tasks             - Tareas asignadas
+✅ cashbox_shifts    - Turnos de caja
+✅ cashbox_movements - Movimientos de caja
+✅ tours             - Tours/Paseos
+✅ tour_clicks       - Tracking de clicks
+✅ tour_commissions  - Comisiones
+✅ reviews           - Reviews de tours
+✅ guest_groups      - Grupos de huéspedes
+✅ guest_group_members - Miembros de grupos
+✅ bed_blocks        - Bloqueos de camas
+✅ activity_log      - Log de actividades
 ```
 
 ---
 
-## 🌟 **Características del Diseño**
+## 📱 FUNCIONALIDADES
 
-✅ **Responsive Design** - Optimizado para móviles, tablets y desktop
-✅ **Menú Hamburguesa** - Navegación móvil profesional que se recoge automáticamente
-✅ **Tema Claro Moderno** - Interfaz profesional y limpia
-✅ **Contraste Optimizado** - Excelente legibilidad en todos los dispositivos
-✅ **Interfaz en Español** - Totalmente localizada
-✅ **Navegación Intuitiva** - UX optimizada para touch y desktop
-✅ **Animaciones Suaves** - Transiciones profesionales y fluidas
-✅ **Layout Adaptativo** - Botones debajo del texto en móvil, al lado en desktop
+### 🔐 Autenticación y Usuarios
+- Login seguro con bcrypt
+- 3 roles: Administrador, Recepcionista, Voluntario
+- CRUD completo de usuarios
+- Control de permisos granular
+- Sesiones seguras
+
+**Credenciales de prueba:**
+- Admin: `admin` / `admin123`
+- Recepción: `recepcion` / `recepcion123`
+- Voluntario: `voluntario` / `voluntario123`
+
+### 📋 Sistema de Reservas ⭐ NUEVO
+- Crear reservas anticipadas
+- Verificación de disponibilidad en tiempo real
+- Códigos de confirmación únicos
+- Gestión de estados completa
+- Actualización de fechas con recálculo automático
+- Cancelación de reservas
+- Confirmación con transacción automática
+- Filtros por estado, fecha, huésped
+
+### 🛏️ Gestión de Camas
+- 27 camas en 6 habitaciones (Hab 1-4, Priv 1-2)
+- Estados: Clean, Dirty, Occupied, Blocked, Maintenance
+- Check-in y check-out
+- Asignación de huéspedes
+
+### 👥 Gestión de Huéspedes
+- CRUD completo
+- Búsqueda avanzada (nombre, documento, email, teléfono)
+- Historial de reservas
+- Estadísticas
+- Campos legales (nacionalidad, pasaporte, contacto emergencia)
+- Sistema de blacklist
+
+### 🛒 Sistema POS
+- Gestión de productos
+- Control de inventario
+- Carrito de compras
+- Múltiples métodos de pago
+- Stock bajo con alertas
+
+### 👨‍💼 Gestión de Personal
+- Administración de empleados
+- Posiciones y salarios
+- Contactos de emergencia
+- Estados activo/inactivo
+
+### 🚶 Tours
+- Catálogo de tours
+- Tracking de clicks
+- Sistema de comisiones
+- Integración con proveedores
+
+### 📊 Analytics y Reportes
+- Dashboard con KPIs
+- Ocupación en tiempo real
+- Reportes financieros
+- Gráficos interactivos (Chart.js)
 
 ---
 
-## 📋 **Datos Demo Incluidos**
+## 🚀 QUICK START
 
-- **3 Usuarios** con roles configurados (admin, recepcion, voluntario)
-- **6 Huéspedes** con datos colombianos realistas
-- **27 Camas** configuradas según habitaciones.txt
-- **15 Productos POS** con precios y stock
-- **8 Empleados** distribuidos por posiciones
-- **5 Tours** para Medellín con URLs reales
-- **Transacciones** de ejemplo para reportes
+### Desarrollo Local
+
+```bash
+# 1. Clonar repositorio
+git clone [repo-url]
+cd almanik-pms-viajero
+
+# 2. Instalar dependencias
+npm install
+
+# 3. Configurar entorno (desarrollo usa SQLite automáticamente)
+echo "NODE_ENV=development" > .env
+
+# 4. Correr servidor
+npm run dev
+
+# 5. Abrir navegador
+# http://localhost:3000
+# Login: admin / admin123
+```
+
+### Testing del Sistema de Reservas
+
+```bash
+# Script automático (recomendado)
+./test-reservations.sh
+
+# O manual paso a paso
+# Ver: GUIA-TESTING-MANUAL.md
+```
 
 ---
 
-## 📈 **Métricas de Sistema**
+## 📚 DOCUMENTACIÓN
 
-### **✅ Estado Actual:**
-- **Uptime:** 100% operativo
-- **URL:** https://hostal-pms.vercel.app
-- **Base de datos:** PostgreSQL (Supabase) conectada
-- **SSL:** Activo y verificado
-- **Errores:** 0 errores críticos
+### Documentos Principales
 
-### **📊 Capacidad:**
-- **Camas gestionadas:** 27 camas en 6 habitaciones
-- **Usuarios concurrentes:** Soporta múltiples sesiones
-- **Transacciones:** Sin límite (base PostgreSQL)
-- **Reportes:** Exportación ilimitada
+| Documento | Descripción |
+|-----------|-------------|
+| `README.md` | Este archivo - Overview general |
+| `CREDENCIALES-LOGIN.md` | Credenciales de acceso al sistema |
+| `GUIA-TESTING-MANUAL.md` | Guía paso a paso para testing |
+| `test-reservations.sh` | Script de testing automático |
+
+### Documentación Técnica
+
+**Planning y Desarrollo:**
+- `docs/02-planning/DEVELOPMENT-PLAN-2025-UPDATED.md` - Plan maestro de desarrollo
+- `docs/02-planning/SPRINT-PLAN-DELEGABLE.md` - Plan de sprints para equipo
+- `docs/04-daily-plans/DIA-2-PLAN.md` - Plan detallado Día 2
+- `docs/04-daily-plans/DIA-2-RESUMEN.md` - Resumen y logros Día 2
+
+**API Documentation:**
+- `docs/05-api/RESERVATIONS-API.md` - API completa de Reservas (7 endpoints)
+
+**Deployment:**
+- `docs/03-deployment/NEON-MIGRATION-PLAN.md` - Migración a Neon PostgreSQL
+- `docs/03-deployment/DEPLOY-SUCCESS.md` - Deploy a producción
+
+**Product:**
+- `docs/01-product/PRD-v3-SIMPLIFICADO.md` - Product Requirements
+
+**Database:**
+- `database/schemas/neon-complete-schema.sql` - Schema completo (20 tablas)
 
 ---
 
-## 📁 **ESTRUCTURA DEL PROYECTO**
+## 🗂️ ESTRUCTURA DEL PROYECTO
 
 ```
 almanik-pms-viajero/
-├── 📁 docs/                    # 📚 TODA LA DOCUMENTACIÓN
-│   ├── 01-product/            # Definición del producto (PRD, MVP)
-│   ├── 02-planning/           # Roadmaps y sprints
-│   ├── 03-deployment/         # Guías de despliegue
-│   ├── 04-reports/            # Reportes de estado
-│   ├── 05-development/        # Notas de desarrollo
-│   └── archive/               # Documentos obsoletos
-│
-├── 📁 database/               # Base de datos
-│   ├── schemas/              # Esquemas SQL
-│   ├── seeds/                # Datos de prueba
-│   ├── migrations/           # Scripts de migración
-│   └── local/                # BD SQLite local
-│
-├── 📁 server/                 # Backend Node.js
-│   ├── server-simple.js      # Servidor principal
-│   ├── server.js             # Servidor legacy
-│   └── db-adapter.js         # Adaptador de BD
-│
-├── 📁 frontend/               # Frontend React
-├── 📁 public/                 # Archivos públicos
-├── 📁 scripts/                # Scripts de desarrollo
-├── 📁 prototypes/             # Prototipos HTML
-└── 📁 backup-old/             # Backups antiguos
+├── server/
+│   ├── server-simple.js       # Servidor principal
+│   ├── db-adapter.js           # Adapter SQLite/PostgreSQL
+│   ├── almanik.db              # SQLite (desarrollo)
+│   ├── migrate-bookings.js     # Script migración bookings
+│   └── modules/
+│       └── reservations.js     # Módulo de reservas ⭐ NUEVO
+├── public/
+│   └── index.html              # Frontend monolítico
+├── database/
+│   └── schemas/
+│       └── neon-complete-schema.sql
+├── docs/
+│   ├── 01-product/             # PRD y especificaciones
+│   ├── 02-planning/            # Planes de desarrollo
+│   ├── 03-deployment/          # Guías de deploy
+│   ├── 04-daily-plans/         # Planes diarios
+│   └── 05-api/                 # Documentación API ⭐ NUEVO
+├── test-reservations.sh        # Testing automático ⭐ NUEVO
+├── GUIA-TESTING-MANUAL.md      # Guía de testing ⭐ NUEVO
+├── CREDENCIALES-LOGIN.md       # Credenciales
+├── package.json
+├── .env
+└── README.md
 ```
-
-**📖 Ver documentación completa:** [`docs/README.md`](docs/README.md)
 
 ---
 
-## 🔧 **Resolución de Problemas**
+## 🔌 API ENDPOINTS
 
-### **❌ Error "No se puede conectar al servidor":**
-**Solución:** Cache del browser
+### Autenticación
+- `POST /api/login` - Login de usuario
+- `POST /api/logout` - Logout de usuario
+
+### Usuarios
+- `GET /api/users` - Listar usuarios (admin)
+- `POST /api/users` - Crear usuario (admin)
+
+### Reservas ⭐ NUEVO
+- `POST /api/reservations` - Crear reserva
+- `GET /api/reservations` - Listar reservas
+- `GET /api/reservations/:id` - Ver detalles
+- `PUT /api/reservations/:id` - Actualizar reserva
+- `DELETE /api/reservations/:id` - Cancelar reserva
+- `POST /api/reservations/:id/confirm` - Confirmar reserva
+- `GET /api/reservations/availability/check` - Verificar disponibilidad
+
+### Huéspedes
+- `GET /api/guests` - Listar huéspedes
+- `POST /api/guests` - Crear huésped
+- `GET /api/guests/search` - Buscar huéspedes
+- `PUT /api/guests/:id` - Actualizar huésped
+
+### Camas
+- `GET /api/beds` - Listar camas
+- `PUT /api/beds/:id/status` - Actualizar estado
+
+### Check-in/Check-out
+- `POST /api/checkin` - Realizar check-in
+- `POST /api/checkout/:bed_id` - Realizar check-out
+- `GET /api/balance/:bed_id` - Ver balance
+
+### POS
+- `GET /api/products` - Listar productos
+- `POST /api/sell` - Registrar venta
+
+### Dashboard
+- `GET /api/dashboard` - Obtener estadísticas
+
+**Ver documentación completa:** `docs/05-api/RESERVATIONS-API.md`
+
+---
+
+## 🧪 TESTING
+
+### Testing Automático
 ```bash
-1. Ctrl + F5 (Windows/Linux) o Cmd + Shift + R (Mac)
-2. Abrir en modo incógnito
-3. F12 > Network > Disable cache
+# Testing completo del sistema de reservas
+./test-reservations.sh
 ```
 
-### **❌ Login no funciona:**
-**Verificar:**
-- Credenciales exactas (case-sensitive)
-- Conexión a internet
-- Consola del browser (F12) para errores JavaScript
+### Testing Manual
+Ver: `GUIA-TESTING-MANUAL.md`
+
+### Test Cases Cubiertos
+- ✅ Login y autenticación
+- ✅ Verificación de disponibilidad
+- ✅ Creación de reservas
+- ✅ Confirmación de reservas
+- ✅ Actualización de fechas
+- ✅ Cancelación de reservas
+- ✅ Validación de conflictos
+- ✅ Cálculo automático de precios
+- ✅ Generación de códigos únicos
 
 ---
 
-## 🚀 **ESTADO FINAL: PRODUCCIÓN COMPLETA**
+## 🔄 FLUJO DE TRABAJO
 
-### **✅ SISTEMA 100% OPERATIVO:**
-- ✅ **Deploy:** Exitoso y verificado en Vercel
-- ✅ **Funcionalidad:** Completa y probada
-- ✅ **Seguridad:** bcrypt + PostgreSQL
-- ✅ **Escalabilidad:** Supabase + Vercel
-- ✅ **Usuarios:** 3 roles configurados
-- ✅ **Acceso:** https://hostal-pms.vercel.app
+### Desarrollo
+1. **Desarrollo local:** SQLite (automático)
+2. **Testing local:** `npm run dev` + `test-reservations.sh`
+3. **Commit:** Mensajes descriptivos con convención
+4. **Push:** A branch correspondiente
+
+### Producción
+1. **Database:** PostgreSQL (Neon Serverless)
+2. **Deploy:** Vercel (automático en push a main)
+3. **URL:** https://hostal-pms.vercel.app
 
 ---
 
-## 📖 **DOCUMENTACIÓN**
+## 📊 PROGRESO DEL PROYECTO
 
-### **Documentación Completa:**
-Toda la documentación ha sido organizada profesionalmente en la carpeta `docs/`
+### Completado (70%)
+- ✅ Infraestructura base
+- ✅ Sistema de autenticación
+- ✅ Database completa (20 tablas)
+- ✅ Migración a Neon
+- ✅ Sistema de reservas (backend)
+- ✅ CRUD de huéspedes
+- ✅ CRUD de camas
+- ✅ Check-in/check-out básico
+- ✅ POS básico
+- ✅ Dashboard con métricas
 
-- **Inicio rápido:** [`docs/README.md`](docs/README.md)
-- **Para desarrolladores:** [`docs/05-development/context.md`](docs/05-development/context.md)
-- **Para deployment:** [`docs/03-deployment/DEPLOYMENT-GUIDE.md`](docs/03-deployment/DEPLOYMENT-GUIDE.md)
-- **Estado actual:** [`docs/04-reports/STATUS-REPORT-CURRENT.md`](docs/04-reports/STATUS-REPORT-CURRENT.md)
+### En Desarrollo (30%)
+- 🔄 Reservas Frontend (Día 3)
+- 🔄 Sistema de Caja completo
+- 🔄 Check-in/check-out mejorado
+- 🔄 POS con inventario real
+- 🔄 Gestión de Staff completa
+- 🔄 Sistema de Tareas
+- 🔄 Tours completo
+- 🔄 Reportes avanzados
 
-### **Comandos de Desarrollo:**
+---
 
-```bash
-# Instalar dependencias
-npm install
+## 🗓️ ROADMAP
 
-# Iniciar servidor de desarrollo
-npm run dev
+### Semana 1 (Actual) - FASE 1
+- [x] Día 1: Migración Neon ✅
+- [x] Día 2: Reservas Backend ✅
+- [ ] Día 3: Reservas Frontend
+- [ ] Día 4-5: Sistema de Caja
 
-# Iniciar servidor de producción
-npm start
+### Semana 2-4 - FASE 2
+- [ ] Check-in/check-out mejorado
+- [ ] POS con inventario completo
+- [ ] Gestión de Staff
+- [ ] Sistema de Tareas
+- [ ] Reportes avanzados
 
-# Ejecutar tests
-node scripts/test-simple.js
-node scripts/test-supabase.js
+### Semana 5-8 - FASE 3
+- [ ] Tours completo
+- [ ] Guest Groups
+- [ ] Integraciones (Booking.com, etc.)
+- [ ] Testing end-to-end
+- [ ] Optimización y launch
+
+---
+
+## 👥 EQUIPO Y DELEGACIÓN
+
+### Tareas Delegables
+- ✅ Frontend de Reservas (Día 3)
+- ✅ Diseño de componentes UI
+- ✅ Módulos independientes (Caja, POS, Staff)
+- ✅ Testing de features
+
+### Requiere Supervisión
+- ⚠️ Integración de módulos
+- ⚠️ Database migrations
+- ⚠️ Deploy a producción
+- ⚠️ Security features
+
+**Ver:** `docs/02-planning/SPRINT-PLAN-DELEGABLE.md`
+
+---
+
+## 🐛 ISSUES CONOCIDOS
+
+**Ninguno en producción** ✅
+
+**Pendientes menores:**
+- UI de reservas no implementada (planificado Día 3)
+- Sistema de caja solo backend básico
+- POS usa productos hardcoded (migración pendiente)
+
+---
+
+## 📝 CHANGELOG
+
+### v1.2.0 (2025-11-20) - DÍA 2
+**Agregado:**
+- ✨ Sistema completo de Reservas (Backend)
+- ✨ 7 nuevos endpoints API
+- ✨ Validación de disponibilidad con conflictos
+- ✨ Generación automática de códigos
+- ✨ Documentación API completa
+- ✨ Scripts de testing automático
+- 🗄️ Migración de schema bookings (7 columnas)
+
+### v1.1.0 (2025-11-19) - DÍA 1
+**Agregado:**
+- ✨ Migración a Neon PostgreSQL
+- ✨ Schema completo (20 tablas)
+- ✨ Sistema de autenticación mejorado
+- 🐛 Fix: Errores JavaScript frontend
+- 📝 Documentación de migración
+
+### v1.0.0 (2025-10-10)
+**Release Inicial:**
+- ✨ Deploy a Vercel
+- ✨ Database Supabase
+- ✨ Features básicas funcionando
+
+---
+
+## 🤝 CONTRIBUIR
+
+### Setup para Desarrolladores
+1. Fork del repositorio
+2. Crear branch: `git checkout -b feature/nueva-feature`
+3. Commit: `git commit -m "feat: descripción"`
+4. Push: `git push origin feature/nueva-feature`
+5. Crear Pull Request
+
+### Convenciones
+- **Commits:** Conventional Commits (feat, fix, docs, etc.)
+- **Código:** ESLint + Prettier
+- **Testing:** Obligatorio para nuevas features
+- **Documentación:** Actualizar con cambios
+
+---
+
+## 📞 SOPORTE
+
+### Documentación
+- API: `docs/05-api/`
+- Guías: `GUIA-TESTING-MANUAL.md`
+- Plans: `docs/04-daily-plans/`
+
+### Recursos
+- **Production:** https://hostal-pms.vercel.app
+- **Neon Dashboard:** https://console.neon.tech
+- **Vercel Dashboard:** https://vercel.com
+
+---
+
+## 📄 LICENCIA
+
+MIT License - Ver LICENSE file
+
+---
+
+## ⭐ FEATURES DESTACADAS
+
+### 🎯 Código de Confirmación Único
+Cada reserva genera un código único: `ALM-YYYYMMDD-HHMMSS`
+```
+Ejemplo: ALM-20251120-184046
 ```
 
+### 🔍 Validación de Disponibilidad Inteligente
+Detecta conflictos de reservas en tiempo real:
+- Superposición de fechas
+- Múltiples reservas misma cama
+- Estados de reserva (pending, confirmed, checked_in)
+
+### 💰 Cálculo Automático de Precios
+```javascript
+total = precio_cama × noches
+noches = (check_out - check_in) en días
+```
+
+### 📊 Transacciones Automáticas
+Al confirmar una reserva:
+- Se crea transacción tipo "charge"
+- Se registra en activity_log
+- Se vincula con la reserva
+
 ---
 
-**Desarrollado por:** Mosaiko Labs
-**Versión:** 2.0.0 - Sistema Completo con Autenticación
-**Licencia:** MIT
-**Estado:** 🚀 **PRODUCCIÓN ACTIVA**
+## 🎉 AGRADECIMIENTOS
 
-### **📞 Soporte:**
-- **Vercel Dashboard:** https://vercel.com/mosaiko-labs-projects/almanik-pms
-- **Supabase Dashboard:** https://lporxeeojhszfldluprv.supabase.co
-- **Documentación Principal:** [`docs/README.md`](docs/README.md)
+**Desarrollado con:**
+- ❤️ Node.js
+- ⚡ Express.js
+- 🗄️ PostgreSQL (Neon)
+- 🚀 Vercel
+- 🤖 Claude Code
+
+---
+
+**Status:** ✅ Production Ready + Active Development
+**Versión:** 1.2.0
+**Última actualización:** 2025-11-20
+**Siguiente:** Día 3 - Frontend de Reservas
+
+**¡Sistema funcionando al 100%!** 🚀
