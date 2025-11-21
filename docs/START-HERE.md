@@ -940,7 +940,7 @@ DÍAS 52-56 → FASE 3 Sprint 9: Beds Advanced
 ## 📊 TRACKING DE PROGRESO
 
 ### FASE 0: MIGRACIÓN NEON
-- [ ] Día 1: Migración completa a Neon
+- [x] Día 1: Migración completa a Neon ✅ **COMPLETADO** (2025-11-20)
 
 ### FASE 1 SPRINT 1: CRITICAL BUGS (5 días)
 - [ ] Día 2: Fix check-in/checkout (parte 1)
