@@ -31,6 +31,11 @@ const {
   initPerformanceMetrics,
   getPerformanceStats,
 } = require('./config/monitoring');
+const {
+  QueryMonitor,
+  queryStatsMiddleware,
+  getQueryStatsHandler,
+} = require('./config/queryMonitoring');
 
 const app = express();
 
@@ -70,6 +75,10 @@ app.use(sanitizeInput);
 // Database adapter - auto-detecta SQLite o PostgreSQL
 const dbAdapter = new DatabaseAdapter();
 let db = null;
+
+// Query performance monitoring
+const queryMonitor = new QueryMonitor(dbAdapter);
+app.use(queryStatsMiddleware(queryMonitor));
 
 // Promise wrapper for database operations (compatibilidad)
 const dbGet = async (sql, params = []) => {
@@ -687,6 +696,9 @@ app.get('/api/metrics/performance', requireAuth, (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+// Query performance metrics endpoint (requires auth)
+app.get('/api/metrics/queries', requireAuth, getQueryStatsHandler(queryMonitor));
 
 // ================================================
 // USER MANAGEMENT ENDPOINTS

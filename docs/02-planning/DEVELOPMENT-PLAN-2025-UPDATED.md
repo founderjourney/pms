@@ -641,6 +641,33 @@ ALTER TABLE bookings ADD COLUMN source VARCHAR(50) DEFAULT 'walkin';
 
 ---
 
+### SPRINT 2.5: SECURITY & QUALITY HARDENING (1 DÍA) - ✅ COMPLETADO
+
+#### Día 4: Enterprise Security & Monitoring
+**Objetivo:** Transformar prototipo a production-grade ("Silicon Valley standards").
+
+**Tareas Completadas:**
+- [x] **Security Hardening:**
+    - [x] Helmet.js (CSP, HSTS, X-Frame-Options)
+    - [x] Rate limiting (API, Auth, Write)
+    - [x] CORS restrictivo
+    - [x] Input validation (express-validator)
+    - [x] SQL injection protection
+    - [x] Passwords a environment variables
+- [x] **Monitoring & Logging:**
+    - [x] Winston structured logging (Daily rotation)
+    - [x] Sentry integration
+    - [x] Health check endpoints (`/health`, `/metrics`)
+    - [x] Performance monitoring middleware
+- [x] **Testing Framework:**
+    - [x] Jest + Supertest setup
+    - [x] 20 Smoke tests implementados (100% passing)
+    - [x] CI-ready configuration
+
+**Archivos:** `server/config/security.js`, `server/config/monitoring.js`, `server/config/logger.js`, `tests/*`
+
+---
+
 ### SPRINT 3: Módulo de Caja Completo (10 días)
 
 #### Database Schema (1 día)

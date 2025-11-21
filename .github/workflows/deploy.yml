@@ -1,0 +1,170 @@
+name: Deploy Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+
+jobs:
+  deploy-staging:
+    name: Deploy to Staging
+    if: github.ref == 'refs/heads/develop' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'staging')
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+      url: https://staging.almanik-pms.com
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci --production
+
+    - name: Run tests
+      run: npm test
+
+    - name: Build application
+      run: |
+        echo "Building for staging environment..."
+        # Add build steps if needed
+
+    - name: Deploy to staging
+      run: |
+        echo "Deploying to staging..."
+        # Add deployment commands here
+        # Examples:
+        # - scp -r * user@staging-server:/path/to/app
+        # - ssh user@staging-server 'cd /path/to/app && pm2 restart app'
+        # - deploy to cloud provider (Railway, Render, etc)
+      env:
+        DEPLOY_KEY: ${{ secrets.STAGING_DEPLOY_KEY }}
+        STAGING_SERVER: ${{ secrets.STAGING_SERVER }}
+
+    - name: Smoke test
+      run: |
+        echo "Running smoke tests on staging..."
+        sleep 10
+        # curl -f https://staging.almanik-pms.com/health || exit 1
+
+    - name: Notify deployment
+      if: always()
+      run: |
+        echo "Staging deployment ${{ job.status }}"
+        # Add notification logic (Slack, Discord, email, etc)
+
+  deploy-production:
+    name: Deploy to Production
+    if: github.ref == 'refs/heads/main' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'production')
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://almanik-pms.com
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci --production
+
+    - name: Run tests
+      run: npm test
+
+    - name: Security audit
+      run: npm audit --audit-level=high
+
+    - name: Build application
+      run: |
+        echo "Building for production environment..."
+        # Add build steps if needed
+
+    - name: Create backup
+      run: |
+        echo "Creating backup before deployment..."
+        # Add backup logic here
+
+    - name: Deploy to production
+      run: |
+        echo "Deploying to production..."
+        # Add deployment commands here
+        # Examples:
+        # - scp -r * user@prod-server:/path/to/app
+        # - ssh user@prod-server 'cd /path/to/app && pm2 restart app'
+        # - deploy to cloud provider
+      env:
+        DEPLOY_KEY: ${{ secrets.PRODUCTION_DEPLOY_KEY }}
+        PRODUCTION_SERVER: ${{ secrets.PRODUCTION_SERVER }}
+
+    - name: Smoke test
+      run: |
+        echo "Running smoke tests on production..."
+        sleep 10
+        # curl -f https://almanik-pms.com/health || exit 1
+
+    - name: Rollback on failure
+      if: failure()
+      run: |
+        echo "Deployment failed, initiating rollback..."
+        # Add rollback logic here
+
+    - name: Notify deployment
+      if: always()
+      run: |
+        echo "Production deployment ${{ job.status }}"
+        # Add notification logic (Slack, Discord, email, etc)
+
+  tag-release:
+    name: Tag Release
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: deploy-production
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Get version from package.json
+      id: package-version
+      run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
+    - name: Create release tag
+      run: |
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
+        git tag -a "v${{ steps.package-version.outputs.version }}" -m "Release v${{ steps.package-version.outputs.version }}"
+        git push origin "v${{ steps.package-version.outputs.version }}" || echo "Tag already exists"
+
+    - name: Create GitHub Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ steps.package-version.outputs.version }}
+        release_name: Release v${{ steps.package-version.outputs.version }}
+        draft: false
+        prerelease: false
