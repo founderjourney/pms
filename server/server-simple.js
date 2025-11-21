@@ -1,15 +1,71 @@
-// ALMANIK PMS - SERVIDOR ULTRA SIMPLE
+// ALMANIK PMS - PRODUCTION GRADE SERVER
 // SQLite (desarrollo) + PostgreSQL (producción) + Express
+// Security: Helmet, Rate Limiting, CORS, Input Validation
+// Monitoring: Winston, Sentry, Performance Tracking
 
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const compression = require('compression');
 const DatabaseAdapter = require('./db-adapter');
 
+// Import configuration modules
+const logger = require('./config/logger');
+const {
+  helmetConfig,
+  apiLimiter,
+  authLimiter,
+  writeLimiter,
+  corsOptions,
+  validate,
+  validationRules,
+  sanitizeInput,
+  securityHeaders,
+} = require('./config/security');
+const {
+  initSentry,
+  sentryErrorHandler,
+  healthCheck,
+  performanceMonitoring,
+  initPerformanceMetrics,
+  getPerformanceStats,
+} = require('./config/monitoring');
+
 const app = express();
-app.use(express.json());
-app.use(cors());
+
+// ============================================
+// SECURITY & MONITORING MIDDLEWARE (FIRST!)
+// ============================================
+
+// Sentry error tracking (must be first)
+initSentry(app);
+
+// Compression
+app.use(compression());
+
+// Security headers (Helmet)
+app.use(helmetConfig);
+
+// Additional security headers
+app.use(securityHeaders);
+
+// CORS (restrictive in production)
+app.use(cors(corsOptions));
+
+// Body parsing
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// HTTP request logging
+app.use(logger.http);
+
+// Performance monitoring
+initPerformanceMetrics();
+app.use(performanceMonitoring(logger));
+
+// Input sanitization
+app.use(sanitizeInput);
 
 // Database adapter - auto-detecta SQLite o PostgreSQL
 const dbAdapter = new DatabaseAdapter();
@@ -388,8 +444,15 @@ async function createDemoUsers() {
     const adminExists = await dbGet('SELECT id FROM users WHERE username = ?', ['admin']);
 
     if (!adminExists) {
-      // Create admin user
-      const adminHash = await bcrypt.hash('admin123', 10);
+      // Create admin user with password from environment
+      const adminPassword = process.env.ADMIN_PASSWORD || 'CHANGE_ME_IN_PRODUCTION';
+      if (adminPassword === 'CHANGE_ME_IN_PRODUCTION' && process.env.NODE_ENV === 'production') {
+        throw new Error('🚨 FATAL: ADMIN_PASSWORD must be set in production environment!');
+      }
+      if (adminPassword === 'CHANGE_ME_IN_PRODUCTION') {
+        console.warn('⚠️  WARNING: Using default admin password. Set ADMIN_PASSWORD in .env!');
+      }
+      const adminHash = await bcrypt.hash(adminPassword, 10);
       await dbRun(`
         INSERT INTO users (username, email, name, password_hash, role, permissions)
         VALUES (?, ?, ?, ?, ?, ?)
@@ -400,8 +463,12 @@ async function createDemoUsers() {
         all_modules: true
       })]);
 
-      // Create reception user
-      const receptionHash = await bcrypt.hash('recepcion123', 10);
+      // Create reception user with password from environment
+      const receptionPassword = process.env.RECEPTION_PASSWORD || 'CHANGE_ME_IN_PRODUCTION';
+      if (receptionPassword === 'CHANGE_ME_IN_PRODUCTION' && process.env.NODE_ENV === 'production') {
+        throw new Error('🚨 FATAL: RECEPTION_PASSWORD must be set in production environment!');
+      }
+      const receptionHash = await bcrypt.hash(receptionPassword, 10);
       await dbRun(`
         INSERT INTO users (username, email, name, password_hash, role, permissions)
         VALUES (?, ?, ?, ?, ?, ?)
@@ -445,7 +512,11 @@ app.get('/api/debug/users', async (req, res) => {
   }
 });
 
-app.post('/api/login', async (req, res) => {
+// Apply rate limiting to API routes
+app.use('/api', apiLimiter);
+
+// Login endpoint with strict rate limiting
+app.post('/api/login', authLimiter, async (req, res) => {
   try {
     const { username, password } = req.body;
 
@@ -586,6 +657,36 @@ const requirePermission = (module, action) => {
     res.status(403).json({ error: 'Insufficient permissions' });
   };
 };
+
+// ================================================
+// MONITORING & HEALTH ENDPOINTS
+// ================================================
+
+// Health check endpoint (public, no auth)
+app.get('/health', async (req, res) => {
+  try {
+    const health = await healthCheck(dbAdapter);
+    const statusCode = health.status === 'healthy' ? 200 : 503;
+    res.status(statusCode).json(health);
+  } catch (error) {
+    logger.error('Health check failed:', error);
+    res.status(503).json({
+      status: 'unhealthy',
+      error: error.message,
+    });
+  }
+});
+
+// Performance metrics endpoint (requires auth)
+app.get('/api/metrics/performance', requireAuth, (req, res) => {
+  try {
+    const stats = getPerformanceStats();
+    res.json(stats);
+  } catch (error) {
+    logger.error('Performance metrics failed:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
 
 // ================================================
 // USER MANAGEMENT ENDPOINTS
@@ -1829,10 +1930,34 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
 });
 
-// ERROR HANDLER
+// ============================================
+// ERROR HANDLING (MUST BE LAST!)
+// ============================================
+
+// Sentry error handler (must be before other error handlers)
+app.use(sentryErrorHandler);
+
+// Custom error handler
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: 'Something went wrong!' });
+  // Log error with Winston
+  logger.error('Unhandled error:', {
+    error: err.message,
+    stack: err.stack,
+    url: req.originalUrl,
+    method: req.method,
+    ip: req.ip,
+  });
+
+  // Send appropriate response
+  const statusCode = err.statusCode || 500;
+  const message = process.env.NODE_ENV === 'production'
+    ? 'Internal server error'
+    : err.message;
+
+  res.status(statusCode).json({
+    error: message,
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
+  });
 });
 
 // For Vercel serverless deployment
@@ -1853,12 +1978,18 @@ async function startServer() {
 
     const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => {
-      console.log(`🚀 Almanik PMS Simple running on port ${PORT}`);
-      console.log(`🌐 Dashboard: http://localhost:${PORT}`);
-      console.log(`🔧 API: http://localhost:${PORT}/api`);
-      console.log(`🔑 Login: admin / admin123`);
-      console.log('📅 iCal Sync: Running every 2 hours');
-      console.log('');
+      logger.info(`🚀 Almanik PMS Production Server running on port ${PORT}`);
+      logger.info(`🌐 Dashboard: http://localhost:${PORT}`);
+      logger.info(`🔧 API: http://localhost:${PORT}/api`);
+      logger.info(`🩺 Health Check: http://localhost:${PORT}/health`);
+      logger.info(`🔑 Login: admin / [check .env ADMIN_PASSWORD]`);
+      logger.info('');
+      logger.info('✅ Security: Helmet, Rate Limiting, CORS, Input Validation');
+      logger.info('✅ Monitoring: Winston Logging, Sentry, Performance Tracking');
+      logger.info('✅ iCal Sync: Running every 2 hours');
+      logger.info('');
+      logger.info(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
+      logger.info('');
     });
   } catch (error) {
     console.error('❌ Failed to start server:', error);
