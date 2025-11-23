@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Reports - Almanik PMS</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="manifest" href="/manifest.json">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #2ecc71;
+            --warning: #f1c40f;
+            --light: #ecf0f1;
+            --dark: #34495e;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            color: var(--primary);
+        }
+
+        .header {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .back-btn {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        /* Financial Stats */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .stat-item {
+            background: var(--light);
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--secondary);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+
+        /* Insights */
+        .insight-item {
+            display: flex;
+            align-items: start;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            background: #f8f9fa;
+            border-left: 4px solid #ccc;
+        }
+
+        .insight-item.warning {
+            border-left-color: var(--warning);
+            background: #fff9e6;
+        }
+
+        .insight-item.success {
+            border-left-color: var(--success);
+            background: #e8f8f5;
+        }
+
+        .insight-item.info {
+            border-left-color: var(--secondary);
+            background: #ebf5fb;
+        }
+
+        .insight-icon {
+            margin-right: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .insight-content h4 {
+            margin: 0 0 0.5rem 0;
+        }
+
+        .insight-content p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            align-items: center;
+        }
+
+        input[type="date"] {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 0.5rem 1rem;
+            background: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <a href="/" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+        <h1><i class="fas fa-chart-pie"></i> Advanced Reports & AI</h1>
+        <div id="current-date"></div>
+    </div>
+
+    <div class="container">
+        <!-- Controls -->
+        <div class="card" style="grid-column: 1 / -1;">
+            <div class="controls">
+                <label>Period:</label>
+                <input type="date" id="start-date">
+                <span>to</span>
+                <input type="date" id="end-date">
+                <button onclick="loadFinancials()">Update Report</button>
+                <button onclick="exportReport()" style="background: var(--success); margin-left: auto;">
+                    <i class="fas fa-file-csv"></i> Export CSV
+                </button>
+            </div>
+        </div>
+
+        <!-- Financial Overview -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Financial Performance</div>
+                <i class="fas fa-coins text-secondary"></i>
+            </div>
+            <div class="stat-grid">
+                <div class="stat-item">
+                    <div class="stat-value" id="total-revenue">$0</div>
+                    <div class="stat-label">Total Revenue</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="rev-pab">$0</div>
+                    <div class="stat-label">RevPAB</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="occupancy-rate">0%</div>
+                    <div class="stat-label">Occupancy Rate</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="avg-rate">$0</div>
+                    <div class="stat-label">Avg Daily Rate</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Smart Insights -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">AI Smart Insights</div>
+                <i class="fas fa-brain text-accent"></i>
+            </div>
+            <div id="insights-container">
+                <p style="text-align: center; color: #999;">Analyzing data...</p>
+            </div>
+        </div>
+
+        <!-- Occupancy Forecast -->
+        <div class="card" style="grid-column: 1 / -1;">
+            <div class="card-header">
+                <div class="card-title">7-Day Occupancy Forecast</div>
+                <i class="fas fa-chart-line text-secondary"></i>
+            </div>
+            <div class="chart-container">
+                <canvas id="forecastChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/reports-advanced.js"></script>
+    <script>
+        // Register Service Worker for PWA functionality
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('✅ Service Worker registered successfully:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.error('❌ Service Worker registration failed:', error);
+                    });
+            });
+        }
+    </script>
+</body>
+
+</html>
