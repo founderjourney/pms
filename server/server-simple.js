@@ -101,7 +101,7 @@ async function logActivity(actionType, module, description, userId = null, entit
       [actionType, module, description, userId, entityId, entityType, details, ipAddress]
     );
   } catch (err) {
-    console.error('Error logging activity:', err);
+    logger.error('Error logging activity:', err);
   }
 }
 
@@ -127,7 +127,42 @@ async function initializeDatabase() {
       status TEXT DEFAULT 'clean',
       room TEXT,
       guest_id INTEGER,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(guest_id) REFERENCES guests(id)
+    )`);
+
+    // Products Table
+    await dbRun(`CREATE TABLE IF NOT EXISTS products (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      price REAL NOT NULL,
+      category TEXT,
+      stock INTEGER DEFAULT 0,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`);
+
+    // Sale Items Table (for POS)
+    await dbRun(`CREATE TABLE IF NOT EXISTS sale_items (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      transaction_id INTEGER,
+      product_id INTEGER,
+      quantity INTEGER NOT NULL,
+      price_at_sale REAL NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(transaction_id) REFERENCES transactions(id),
+      FOREIGN KEY(product_id) REFERENCES products(id)
+    )`);
+
+    // Cashbox Movements Table
+    await dbRun(`CREATE TABLE IF NOT EXISTS cashbox_movements (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      type TEXT NOT NULL, -- income, expense
+      category TEXT,
+      amount REAL NOT NULL,
+      description TEXT,
+      user_id INTEGER,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(user_id) REFERENCES users(id)
     )`);
 
     await dbRun(`CREATE TABLE IF NOT EXISTS bookings (
@@ -632,11 +667,207 @@ const requireAuth = (req, res, next) => {
 };
 
 // ============================================
+// FEEDBACK ENDPOINT (Day 8)
+// ============================================
+app.post('/api/feedback', async (req, res) => {
+  try {
+    const { type, message, rating, email } = req.body;
+
+    if (!message || !type) {
+      return res.status(400).json({ error: 'Type and message are required' });
+    }
+
+    // Log feedback to database (activity_log for now, or a new table if needed)
+    // Using activity_log is a quick win for Day 8
+    await logActivity(
+      'feedback_received',
+      'feedback',
+      `Feedback (${type}): ${message.substring(0, 50)}...`,
+      req.user ? req.user.id : null,
+      null,
+      null,
+      JSON.stringify({ type, message, rating, email })
+    );
+
+    // Also log to file via Winston
+    logger.info(`Feedback received: [${type}] ${message} (Rating: ${rating})`);
+
+    res.json({ success: true, message: 'Feedback received' });
+  } catch (error) {
+    logger.error('Error saving feedback:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// ============================================
+// ADVANCED REPORTING & AI ENDPOINTS (Day 10)
+// ============================================
+
+// 1. Advanced Financial Report
+app.get('/api/reports/financial', async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+    const start = startDate || new Date().toISOString().split('T')[0];
+    const end = endDate || new Date().toISOString().split('T')[0];
+
+    // 1. Revenue Breakdown
+    const revenueQuery = `
+      SELECT type, category, SUM(amount) as total
+      FROM cashbox_movements
+      WHERE created_at BETWEEN ? AND ? AND type = 'income'
+      GROUP BY type, category
+    `;
+    const revenueRows = await dbAll(revenueQuery, [start + ' 00:00:00', end + ' 23:59:59']);
+
+    // 2. Occupancy Stats
+    const bedsQuery = `SELECT COUNT(*) as total FROM beds WHERE status != 'maintenance'`;
+    const bedsResult = await dbGet(bedsQuery);
+    const totalBeds = bedsResult ? parseInt(bedsResult.total) : 1;
+
+    const bookingsQuery = `
+      SELECT COUNT(*) as occupied
+      FROM bookings
+      WHERE check_in <= ? AND check_out >= ? AND status IN ('confirmed', 'checked_in')
+    `;
+    const bookingsResult = await dbGet(bookingsQuery, [end, start]); // Note: Overlap logic check_in <= end AND check_out >= start
+    const occupiedBeds = bookingsResult ? parseInt(bookingsResult.occupied) : 0;
+
+    const occupancyRate = (occupiedBeds / totalBeds) * 100;
+
+    // 3. RevPAB (Revenue Per Available Bed)
+    const totalRevenue = revenueRows.reduce((sum, row) => sum + parseFloat(row.total), 0);
+    const revPAB = totalRevenue / totalBeds;
+
+    res.json({
+      period: { start, end },
+      financials: {
+        total_revenue: totalRevenue,
+        breakdown: revenueRows,
+        rev_pab: revPAB.toFixed(2)
+      },
+      occupancy: {
+        total_beds: totalBeds,
+        occupied_beds: occupiedBeds,
+        rate: occupancyRate.toFixed(1) + '%'
+      }
+    });
+  } catch (error) {
+    logger.error('Error in financial report:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// 2. Occupancy Forecast (Basic AI/Projection)
+app.get('/api/reports/forecast', async (req, res) => {
+  try {
+    // Simple projection for next 7 days
+    const forecast = [];
+    const today = new Date();
+
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(today);
+      date.setDate(today.getDate() + i);
+      const dateStr = date.toISOString().split('T')[0];
+
+      // Count confirmed bookings for this date
+      const query = `
+        SELECT COUNT(*) as count 
+        FROM bookings 
+        WHERE check_in <= ? AND check_out > ? AND status IN ('confirmed', 'checked_in')
+      `;
+      const result = await dbGet(query, [dateStr, dateStr]);
+      const confirmed = result ? parseInt(result.count) : 0;
+
+      // Add "predicted" walk-ins (simple heuristic: random 1-3 for demo or avg based on history)
+      const predictedWalkIns = Math.floor(Math.random() * 3) + 1;
+
+      forecast.push({
+        date: dateStr,
+        confirmed: confirmed,
+        predicted_walkins: predictedWalkIns,
+        total_projected: confirmed + predictedWalkIns
+      });
+    }
+
+    res.json({ forecast });
+  } catch (error) {
+    logger.error('Error in forecast:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// 3. Smart Insights (Business Alerts)
+app.get('/api/reports/insights', async (req, res) => {
+  try {
+    const insights = [];
+
+    // Check Occupancy for tomorrow
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const dateStr = tomorrow.toISOString().split('T')[0];
+
+    const bedsQuery = `SELECT COUNT(*) as total FROM beds WHERE status != 'maintenance'`;
+    const bedsResult = await dbGet(bedsQuery);
+    const totalBeds = bedsResult ? parseInt(bedsResult.total) : 27;
+
+    const bookingsQuery = `
+      SELECT COUNT(*) as count 
+      FROM bookings 
+      WHERE check_in <= ? AND check_out > ? AND status IN ('confirmed', 'checked_in')
+    `;
+    const bookingsResult = await dbGet(bookingsQuery, [dateStr, dateStr]);
+    const occupied = bookingsResult ? parseInt(bookingsResult.count) : 0;
+    const occupancyRate = (occupied / totalBeds) * 100;
+
+    if (occupancyRate < 30) {
+      insights.push({
+        type: 'warning',
+        icon: 'fa-exclamation-triangle',
+        title: 'Low Occupancy Alert',
+        message: `Tomorrow's occupancy is only ${occupancyRate.toFixed(1)}%. Consider running a promotion.`
+      });
+    } else if (occupancyRate > 90) {
+      insights.push({
+        type: 'success',
+        icon: 'fa-chart-line',
+        title: 'High Demand Alert',
+        message: `Tomorrow is ${occupancyRate.toFixed(1)}% full! Ensure all staff are scheduled.`
+      });
+    }
+
+    // Check Top Selling Product
+    const topProductQuery = `
+      SELECT p.name, SUM(si.quantity) as total
+      FROM sale_items si
+      JOIN products p ON si.product_id = p.id
+      GROUP BY p.name
+      ORDER BY total DESC
+      LIMIT 1
+    `;
+    const topProductRows = await dbAll(topProductQuery);
+    if (topProductRows.length > 0) {
+      insights.push({
+        type: 'info',
+        icon: 'fa-trophy',
+        title: 'Top Seller',
+        message: `${topProductRows[0].name} is your best selling item. Keep it in stock!`
+      });
+    }
+
+    res.json({ insights });
+  } catch (error) {
+    logger.error('Error in insights:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// ============================================
 // IMPORT MODULES
 // ============================================
 
 const reservationsModule = require('./modules/reservations');
 const icalSyncModule = require('./modules/ical-sync');
+const analyticsModule = require('./modules/analytics');
 const ICalSyncCron = require('./cron/sync-ical');
 
 // ============================================
@@ -733,6 +964,12 @@ app.use('/api/ical', (req, res, next) => {
     next();
   });
 }, icalSyncModule);
+
+// Analytics module (business intelligence)
+app.use('/api/analytics', requireAuth, (req, res, next) => {
+  req.app.locals.db = dbAdapter;
+  next();
+}, analyticsModule);
 
 // ============================================
 // API ROUTES
@@ -1361,7 +1598,7 @@ app.get('/api/reports', requireAuth, async (req, res) => {
     const { start, end, type = 'overview' } = req.query;
     let reportData;
 
-    console.log(`📊 Generating comprehensive ${type} analytics for ${start} to ${end}`);
+    logger.info(`Generating comprehensive ${type} analytics for ${start} to ${end}`);
 
     // Validate dates
     if (!start || !end) {
@@ -1381,16 +1618,16 @@ app.get('/api/reports', requireAuth, async (req, res) => {
     if (type === 'overview') {
       // Get all data needed for comprehensive analytics
       const [
-      totalRevenue,
-      totalBookings,
-      totalGuests,
-      occupancyData,
-      topGuests,
-      topProducts,
-      weeklyRevenue,
-      dailyOccupancy,
-      additionalMetrics
-    ] = await Promise.all([
+        totalRevenue,
+        totalBookings,
+        totalGuests,
+        occupancyData,
+        topGuests,
+        topProducts,
+        weeklyRevenue,
+        dailyOccupancy,
+        additionalMetrics
+      ] = await Promise.all([
         // Total Revenue (bookings + POS)
         dbGet(`
           SELECT
@@ -1627,17 +1864,40 @@ app.get('/api/reports', requireAuth, async (req, res) => {
       };
     }
 
-    console.log(`✅ Generated ${type} report with`, Object.keys(reportData).length, 'sections');
+    logger.info(`Generated ${type} report with ${Object.keys(reportData).length} sections`);
     res.json(reportData);
 
   } catch (err) {
-    console.error('❌ Reports API error:', err);
+    logger.error('Reports API error:', err);
     res.status(500).json({ error: err.message });
   }
 });
 
-// SERVE STATIC FILES
-app.use(express.static(path.join(__dirname, '..', 'public')));
+// SERVE STATIC FILES WITH CACHE OPTIMIZATION
+// Cache static assets for better performance
+const staticOptions = {
+  maxAge: process.env.NODE_ENV === 'production' ? '7d' : 0, // 7 days in production, no cache in dev
+  etag: true,
+  lastModified: true,
+  setHeaders: (res, filePath) => {
+    // Different cache strategies for different file types
+    if (filePath.endsWith('.html')) {
+      // HTML files - short cache (1 hour) for frequent updates
+      res.setHeader('Cache-Control', 'public, max-age=3600');
+    } else if (filePath.match(/\.(css|js)$/)) {
+      // CSS/JS files - medium cache (1 day)
+      res.setHeader('Cache-Control', 'public, max-age=86400');
+    } else if (filePath.match(/\.(jpg|jpeg|png|gif|ico|svg|webp)$/)) {
+      // Images - long cache (7 days)
+      res.setHeader('Cache-Control', 'public, max-age=604800');
+    } else if (filePath.match(/\.(woff|woff2|ttf|eot)$/)) {
+      // Fonts - very long cache (30 days)
+      res.setHeader('Cache-Control', 'public, max-age=2592000');
+    }
+  }
+};
+
+app.use(express.static(path.join(__dirname, '..', 'public'), staticOptions));
 
 // ================================================
 // POS (POINT OF SALE) ENDPOINTS

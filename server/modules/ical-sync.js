@@ -503,7 +503,7 @@ async function syncSource(db, source_id, sessionInfo) {
 
   try {
     // Fetch iCal feed
-    console.log(`🔄 Fetching iCal from: ${source.ical_url}`);
+    // Silently fetch in production to reduce log noise
     const icalData = await fetchURL(source.ical_url);
 
     // Parse iCal
